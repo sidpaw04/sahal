@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { format, parseISO } from 'date-fns';
 import { Day, Activity } from '../types';
 import { TripTimelineStyles, CARD_WIDTH, CARD_HEIGHT } from '../styles/TripTimelineStyles';
 import WeatherWidget from './WeatherWidget';
@@ -197,7 +196,7 @@ export const DayCard: React.FC<DayCardProps> = ({
       {/* Animated Background */}
       <Animated.View 
         style={[
-          TripTimelineStyles.cardAnimatedBackground,
+          TripTimelineStyles.animatedBackground,
           {
             opacity: backgroundAnimation.interpolate({
               inputRange: [0, 1],
@@ -213,7 +212,7 @@ export const DayCard: React.FC<DayCardProps> = ({
       >
         <Animated.View 
           style={[
-            TripTimelineStyles.cardAnimatedGradient1,
+            TripTimelineStyles.animatedGradient1,
             {
               opacity: backgroundAnimation.interpolate({
                 inputRange: [0, 1],
@@ -224,7 +223,7 @@ export const DayCard: React.FC<DayCardProps> = ({
         />
         <Animated.View 
           style={[
-            TripTimelineStyles.cardAnimatedGradient2,
+            TripTimelineStyles.animatedGradient2,
             {
               opacity: backgroundAnimation.interpolate({
                 inputRange: [0, 1],
@@ -237,7 +236,7 @@ export const DayCard: React.FC<DayCardProps> = ({
         {/* Additional Animated Bubbles */}
         <Animated.View 
           style={[
-            TripTimelineStyles.cardAnimatedBubble1,
+            TripTimelineStyles.animatedBubble1,
             {
               opacity: bubble1Animation.interpolate({
                 inputRange: [0, 1],
@@ -256,7 +255,7 @@ export const DayCard: React.FC<DayCardProps> = ({
         />
         <Animated.View 
           style={[
-            TripTimelineStyles.cardAnimatedBubble2,
+            TripTimelineStyles.animatedBubble2,
             {
               opacity: bubble2Animation.interpolate({
                 inputRange: [0, 1],
@@ -275,7 +274,7 @@ export const DayCard: React.FC<DayCardProps> = ({
         />
         <Animated.View 
           style={[
-            TripTimelineStyles.cardAnimatedBubble3,
+            TripTimelineStyles.animatedBubble3,
             {
               opacity: bubble3Animation.interpolate({
                 inputRange: [0, 1],
@@ -324,30 +323,23 @@ export const DayCard: React.FC<DayCardProps> = ({
             {day.activities.map((activity) => renderActivity(activity))}
           </ScrollView>
           
-          <View style={TripTimelineStyles.dayHeader}>
-            <View style={TripTimelineStyles.dayTitleContainer}>
-              <Text style={TripTimelineStyles.dayTitle}>
-                {format(parseISO(day.date), 'MMM dd, yyyy')}
-              </Text>
-            </View>
-            {/* Weather Widget */}
-            {weather && (() => {
-              const city = index < 2 ? 'paris' : 'nice';
-              const dayWeather = weather[city]?.[day.date];
-              if (dayWeather) {
-                return (
-                  <View style={{ marginTop: 8 }}>
-                    <WeatherWidget
-                      weather={dayWeather}
-                      date={day.date}
-                      city={city.charAt(0).toUpperCase() + city.slice(1)}
-                    />
-                  </View>
-                );
-              }
-              return null;
-            })()}
-          </View>
+          {/* Weather Widget */}
+          {weather && (() => {
+            const city = index < 2 ? 'paris' : 'nice';
+            const dayWeather = weather[city]?.[day.date];
+            if (dayWeather) {
+              return (
+                <View style={{ marginTop: 16, alignItems: 'center' }}>
+                  <WeatherWidget
+                    weather={dayWeather}
+                    date={day.date}
+                    city={city.charAt(0).toUpperCase() + city.slice(1)}
+                  />
+                </View>
+              );
+            }
+            return null;
+          })()}
         </View>
       </Animated.View>
     </View>

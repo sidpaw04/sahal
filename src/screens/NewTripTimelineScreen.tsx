@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList, Activity } from '../types';
 import { Ionicons } from '@expo/vector-icons';
-import { format, parseISO, addDays, subDays, isSameDay } from 'date-fns';
+import { addDays, subDays, isSameDay } from 'date-fns';
 import { useTripData } from '../hooks/useTripData';
 import { ActivityDrawer } from '../components/ActivityDrawer';
 import { HorizontalTimeline } from '../components/HorizontalTimeline';
@@ -49,6 +49,8 @@ export default function NewTripTimelineScreen({ navigation }: Props) {
   const [selectedActivity, setSelectedActivity] = useState<ItineraryItem | null>(null);
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const [activeFilter, setActiveFilter] = useState<'all' | 'flight' | 'hotel' | 'activity' | 'meal' | 'transport'>('all');
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const scrollViewRef = useRef<ScrollView>(null);
 
   const getActivityType = (icon: string): ItineraryItem['type'] => {
     switch (icon) {
@@ -280,55 +282,70 @@ export default function NewTripTimelineScreen({ navigation }: Props) {
         </View>
       )}
 
-      {/* Selected Day Info */}
-      {selectedDay && (
+      {/* Enhanced Summary */}
+      {selectedDay && selectedDay.summary && (
         <View style={NewTripTimelineStyles.selectedDayContainer}>
           <Text style={NewTripTimelineStyles.selectedDayTitle}>
-            {format(parseISO(selectedDay.date), 'EEEE, MMMM dd')}
-          </Text>
-          <Text style={NewTripTimelineStyles.selectedDaySubtitle}>
-            {selectedDay.summary || `${filteredItems.length} activities`}
+            {selectedDay.summary}
           </Text>
         </View>
       )}
 
-      {/* Filter Tabs */}
-      <ScrollView 
-        horizontal 
-        showsHorizontalScrollIndicator={false}
-        style={NewTripTimelineStyles.filterContainer}
-        contentContainerStyle={NewTripTimelineStyles.filterContent}
-      >
-        {[
-          { id: 'all', label: 'All', icon: 'apps' },
-          { id: 'flight', label: 'Flights', icon: 'airplane' },
-          { id: 'hotel', label: 'Hotels', icon: 'bed' },
-          { id: 'activity', label: 'Activities', icon: 'camera' },
-          { id: 'meal', label: 'Meals', icon: 'restaurant' },
-          { id: 'transport', label: 'Transport', icon: 'train' },
-        ].map(filter => (
-          <TouchableOpacity
-            key={filter.id}
-            style={[
-              NewTripTimelineStyles.filterTab,
-              activeFilter === filter.id && NewTripTimelineStyles.activeFilterTab
-            ]}
-            onPress={() => setActiveFilter(filter.id as any)}
-          >
-            <Ionicons
-              name={filter.icon as any}
-              size={16}
-              color={activeFilter === filter.id ? '#fff' : '#6366f1'}
-            />
-            <Text style={[
-              NewTripTimelineStyles.filterText,
-              activeFilter === filter.id && NewTripTimelineStyles.activeFilterText
-            ]}>
-              {filter.label}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+      {/* Filter Chips */}
+      <View style={NewTripTimelineStyles.filterContainer}>
+        <TouchableOpacity 
+          style={NewTripTimelineStyles.chevronButton}
+          onPress={() => scrollViewRef.current?.scrollTo({ x: Math.max(0, scrollPosition - 150), animated: true })}
+        >
+          <Ionicons name="chevron-back" size={16} color="#9ca3af" />
+        </TouchableOpacity>
+        
+        <ScrollView
+          ref={scrollViewRef}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={NewTripTimelineStyles.filterScrollView}
+          contentContainerStyle={NewTripTimelineStyles.filterContent}
+          onScroll={(event) => setScrollPosition(event.nativeEvent.contentOffset.x)}
+          scrollEventThrottle={16}
+        >
+          {[
+            { id: 'all', label: 'All', icon: 'apps' },
+            { id: 'flight', label: 'Flights', icon: 'airplane' },
+            { id: 'hotel', label: 'Hotels', icon: 'bed' },
+            { id: 'activity', label: 'Activities', icon: 'camera' },
+            { id: 'meal', label: 'Meals', icon: 'restaurant' },
+            { id: 'transport', label: 'Transport', icon: 'train' },
+          ].map(filter => (
+            <TouchableOpacity
+              key={filter.id}
+              style={[
+                NewTripTimelineStyles.filterChip,
+                activeFilter === filter.id && NewTripTimelineStyles.activeFilterChip
+              ]}
+              onPress={() => setActiveFilter(filter.id as any)}
+            >
+              <Ionicons
+                name={filter.icon as any}
+                size={16}
+                color={activeFilter === filter.id ? '#374151' : '#6b7280'}
+              />
+              {activeFilter === filter.id && (
+                <Text style={NewTripTimelineStyles.activeFilterText}>
+                  {filter.label}
+                </Text>
+              )}
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+        
+        <TouchableOpacity 
+          style={NewTripTimelineStyles.chevronButton}
+          onPress={() => scrollViewRef.current?.scrollTo({ x: scrollPosition + 150, animated: true })}
+        >
+          <Ionicons name="chevron-forward" size={16} color="#9ca3af" />
+        </TouchableOpacity>
+      </View>
 
       {/* Content */}
       <FlatList
@@ -423,17 +440,22 @@ const NewTripTimelineStyles = StyleSheet.create({
     fontSize: 16,
   },
   selectedDayContainer: {
-    backgroundColor: '#fff',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    backgroundColor: '#f8fafc',
+    marginHorizontal: 16,
+    marginVertical: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#f1f5f9',
   },
   selectedDayTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1f2937',
-    marginBottom: 4,
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#64748b',
+    textAlign: 'center',
+    lineHeight: 22,
+    letterSpacing: 0,
   },
   selectedDaySubtitle: {
     fontSize: 14,
@@ -444,34 +466,71 @@ const NewTripTimelineStyles = StyleSheet.create({
     paddingVertical: 12,
   },
   filterContainer: {
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
-  },
-  filterContent: {
-    paddingHorizontal: 20,
+    backgroundColor: '#f8fafc',
     paddingVertical: 12,
-  },
-  filterTab: {
+    paddingHorizontal: 8,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    marginRight: 8,
-    borderRadius: 16,
-    backgroundColor: '#f3f4f6',
   },
-  activeFilterTab: {
-    backgroundColor: '#6366f1',
+  chevronButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#ffffff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  filterScrollView: {
+    flex: 1,
+    marginHorizontal: 4,
+  },
+  filterContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+  },
+  filterChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    marginRight: 8,
+    borderRadius: 18,
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
+    minWidth: 36,
+    justifyContent: 'center',
+  },
+  activeFilterChip: {
+    backgroundColor: '#f1f5f9',
+    borderColor: '#cbd5e1',
+    shadowOpacity: 0.1,
+    elevation: 2,
+    paddingHorizontal: 12,
   },
   filterText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#6366f1',
+    fontSize: 11,
+    fontWeight: '500',
+    color: '#6b7280',
     marginLeft: 4,
   },
   activeFilterText: {
-    color: '#fff',
+    color: '#374151',
+    fontWeight: '600',
+    fontSize: 11,
+    marginLeft: 6,
   },
   contentContainer: {
     padding: 16,
