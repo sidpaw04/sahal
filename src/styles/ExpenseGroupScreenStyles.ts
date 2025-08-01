@@ -1,0 +1,155 @@
+import { StyleSheet } from 'react-native';
+
+export const ExpenseGroupScreenStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f8fafc',
+  },
+  mainContent: {
+    flex: 1,
+    padding: 0,
+    margin: 0,
+    backgroundColor: '#f8fafc',
+  },
+  centerContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#6b7280',
+  },
+  errorTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#1e293b',
+    marginBottom: 8,
+  },
+  errorSubtitle: {
+    fontSize: 16,
+    color: '#6b7280',
+    textAlign: 'center',
+    lineHeight: 24,
+  },
+  groupContent: {
+    backgroundColor: '#fff',
+    paddingVertical: 0,
+    paddingHorizontal: 0,
+    margin: 0,
+    width: '100%',
+  },
+  groupTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#1e293b',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  peopleSection: {
+    marginTop: 0,
+    marginBottom: 16,
+    paddingHorizontal: 0,
+    paddingTop: 5,
+  },
+  peopleContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: 8,
+    width: '100%',
+  },
+  personItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#e0e7ff',
+    borderRadius: 16,
+    padding: 6,
+    paddingHorizontal: 8,
+    marginBottom: 4,
+  },
+  personIcon: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 6,
+  },
+  personInitial: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  personName: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#1e293b',
+  },
+  expensesSection: {
+    marginTop: 0,
+  },
+  expensesHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+    paddingHorizontal: 20,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1e293b',
+    marginBottom: 12,
+  },
+  addExpenseIcon: {
+    backgroundColor: '#6366f1',
+    borderRadius: 16,
+    width: 32,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 10,
+  },
+  addExpenseIconText: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  loadingIndicator: {
+    marginTop: 20,
+  },
+  expensesListContainer: {
+    paddingBottom: 0,
+    paddingHorizontal: 0,
+  },
+  expensesList: {
+    paddingBottom: 0,
+    paddingHorizontal: 0,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f8fafc',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#1e293b',
+    marginBottom: 8,
+  },
+  emptySubtitle: {
+    fontSize: 16,
+    color: '#6b7280',
+    textAlign: 'center',
+    lineHeight: 24,
+  },
+}); 

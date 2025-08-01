@@ -1,0 +1,19 @@
+{
+  "name": "google-drive-test",
+  "version": "1.0.0",
+  "description": "Test script for Google Drive integration",
+  "main": "test-drive-integration.js",
+  "scripts": {
+    "test": "node test-drive-integration.js",
+    "test:upload": "node -e \"require('./test-drive-integration.js').testFileUpload()\"",
+    "test:download": "node -e \"require('./test-drive-integration.js').testFileDownload()\"",
+    "test:tickets": "node -e \"require('./test-drive-integration.js').testTicketOperations()\""
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "fs": "^0.0.1-security"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+} 
